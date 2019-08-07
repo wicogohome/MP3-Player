@@ -102,9 +102,11 @@ var app = new Vue({
         },
         randomSong: function () {
             if (this.is_random) {
-                var list = Math.floor(Math.random() * 2);
+                var list = Math.round(Math.random());
+                console.log(list);
                 app.current_list = list;
                 var song = Math.floor(Math.random() * app.playlist[app.current_list].length);
+                console.log(song);
                 app.current_song = song;
                 this.player.loadVideoById(app.playlist[app.current_list][app.current_song].video_id);
             }
