@@ -16,9 +16,10 @@ export default defineComponent({
 
         const { isListShow } = useUI();
         const { newPlaylist, addNewPlaylist } = usePlaylistInput();
-        
+
         loadPlayer();
 
+       
         return {
             // playlists
             playlists,
@@ -55,19 +56,23 @@ export default defineComponent({
 
 <template>
     <div id="youtube"></div>
-    <div class="row justify-content-center">
+    <div class="row " :class="{
+      'justify-content-end':isListShow,
+      'justify-content-center': !isListShow,
+    }">
         <div class="playlist" :class="{'list-show':isListShow}">
-            <div class="playlist-left">
-                <form @submit.prevent="addNewPlaylist">
+            <div class="playlist-left ">
+                <div class="position-relative">
                     <input 
                         type="text" 
                         name="search" 
                         class="input-custom" 
                         v-model="newPlaylist"
-                        placeholder="Youtube list ID"
+                        placeholder="Youtube list"
                     >
-                    <button type="submit" class="btn btn-primary">加入</button>
-                </form>
+                    <div class="position-absolute search-btn" @click="addNewPlaylist"> <img  src="/image/search.svg"></div>
+                   
+                </div>
                 <div class="playlist-left-list mt-5">
                     <div class="left-title">播放列表</div>
                     <ul class="list-unstyled ul-left">
@@ -75,7 +80,7 @@ export default defineComponent({
                             <div class="triangle" :class="{'active':index===currentListIndex}">
                                 <img src='/image/tra.svg' alt="三角" width="15">
                             </div>
-                            <span class="text-uppercase">{{list.name}}</span>
+                            <span class="text-uppercase ">{{list.name}}</span>
                         </li>
                     </ul>
                     <div class="left-title">歌手</div>
@@ -84,7 +89,7 @@ export default defineComponent({
             </div>
             <div class="playlist-right">
                 <div class="row no-gutters list-top">
-                    <b class="list-title mr-auto text-uppercase">{{currentList.name}}</b>
+                    <b class="list-title mr-auto text-uppercase ellipsis-text">{{currentList.name}}</b>
                     <div class="list-btn" @click="isListShow=!isListShow">List
                         <div class="w-100"></div>
                         <i class="fas fa-bars fa-2x"></i></div>
@@ -111,34 +116,36 @@ export default defineComponent({
                         </li>
                     </ul>
                 </div>
-                <div class="img-place bg-dark" style="height: 20%"><img src="/image/「專輯封面」的圖片搜尋結果.jpg" height="100%"></div>
+                <!-- <div class="img-place bg-dark" style="height: 20%"><img src="/image/「專輯封面」的圖片搜尋結果.jpg" height="100%"></div> -->
             </div>
         </div>
-        <div id="player" class="mt-3" :class="{'player-right':isListShow}">
-            <div class="row no-gutters mt-3 justify-content-center">
-                <a :href="'https://www.youtube.com/watch?v='+currentSong.videoId" target="_blank">
-                <div class="circle d-flex mr-5"
+        <div id="player" class="d-flex flex-column justify-content-around" :class="{'player-right':isListShow}">
+            <div class="row no-gutters justify-content-center">
+                <a :href="'https://www.youtube.com/watch?v='+currentSong.videoId" target="_blank" class="circle-href">
+                <div class="circle d-flex"
                      :class="{'active':isPlaying}"
-                     :style="{backgroundSize:'auto 495px',backgroundImage:'url('+currentSong.imgUrl+')',backgroundRepeat:'no-repeat',backgroundPosition:'center center'}">
+                     :style="{backgroundSize:'auto 100%',backgroundImage:'url('+currentSong.imgUrl+')',backgroundRepeat:'no-repeat',backgroundPosition:'center center'}">
                     <div class="circle-sm mx-auto d-flex align-self-center"></div>
 
                 </div>
                 </a>
-                <div class="btn-row">
+                <div class="btn-row d-flex flex-column justify-content-between">
+                  <div>
                     <div class="btn-set" @click="lastSong()">
                         <div class="btn-shadow"></div>
                         <div class="player-next-btn player-btn-sm">
                             <img src="/image/next.svg" alt="next" width="22"></div>
                     </div>
 
-                    <div class="w-100"></div>
                     <div class="btn-set" @click="nextSong()">
                         <div class="btn-shadow"></div>
                         <div class="player-pre-btn player-btn-sm  ">
                             <img src="/image/next.svg" alt="next" width="22" style="transform: rotate(180deg)"></div>
                     </div>
-                    <div class="w-100"></div>
-                    <div class="btn-set"  @click="isRandom=!isRandom" style="margin-top: 285px;">
+                  </div>
+                  
+       
+                    <div class="btn-set btn-random"  @click="isRandom=!isRandom">
                         <div class="btn-shadow" :class="{'click':isRandom}"></div>
                         <div class="player-random-btn player-btn-sm" :class="{'btn-is-random':isRandom}">
                             <img src="/image/Group 20.svg" alt="next" width="30"></div>
@@ -146,22 +153,27 @@ export default defineComponent({
                 </div>
 
             </div>
-            <div class="row  no-gutters justify-content-around mt-3">
-                <div class="mt-2 col-4 title-col">
+            <div class="row  no-gutters justify-content-around ">
+                <div class=" col-4 title-col">
                     <div class="title ellipsis-text"><b>{{currentSong.title}}</b>
                         <div class="channel ellipsis-text">{{currentSong.channelTitle}}</div>
                     </div>
                 </div>
 
-                <div class="btn-set col-4">
-                    <div class="btn-shadow" style="width: 40%;top: -2px;left: 78px;"></div>
-                    <div id="player-hand" class="hand-default" :class="{'hand-active':isPlaying}"><img src="/image/player.svg" alt="player"></div>
+                <div class="btn-set col-4 m-0 d-flex justify-content-center">
+                  <div class="position-relative">
+                    <div class="btn-shadow control-btn"></div>
+                    <div id="player-hand" class="hand-default" :class="{'hand-active':isPlaying}">
+                      <img src="/image/player.svg" alt="player">
+                    </div>
              
-                    <div class="player-start-btn player-btn-lg mx-auto" v-show="!isPlaying " @click="play">
+                    <div class="player-start-btn player-btn-lg mx-auto" v-show="!isPlaying && isReady" @click="play">
                         <img src="/image/play.svg" alt="play" width="30"></div>
-                    <div class="player-puase-btn player-btn-lg mx-auto" v-show="isPlaying " @click="pause">
+                    <div class="player-puase-btn player-btn-lg mx-auto" v-show="isPlaying || !isReady" @click="pause">
                         <img src="/image/stop.svg" alt="play" width="30"></div>
 
+                  </div>
+              
                 </div>
                 <div class="mt-2 col-4">
                     <div class="slidecontainer" style="padding-right: 45px;">
@@ -172,9 +184,9 @@ export default defineComponent({
 
 
             </div>
-            <div class="row no-gutters">
-                <div id="through_time" class="offset-1 col-1">{{now}}</div>
-                <div class="col-9">
+            <div class="row no-gutters px-4">
+                <div id="through_time" class="col-md-1 col-2 text-right pr-3">{{now}}</div>
+                <div class="col-md-10 col-8 ">
                     <div class="slidecontainer">
                         <input type="range" :min=0 :max="currentSong.time"
                                v-model="currentSong.now" class="slider " id="time"
@@ -182,7 +194,7 @@ export default defineComponent({
                                :style="{background: 'rgba(0, 0, 0, 0) linear-gradient(to right, rgb(197, 197, 197)'+(currentSong.now/currentSong.time)*100+'%,rgb(255, 255, 255)'+(currentSong.now/currentSong.time)*100+'%) repeat scroll 0% 0%'}">
                     </div>
                 </div>
-                <div id="full_time" class="col-1">{{duration}}</div>
+                <div id="full_time" class="col-md-1 col-2">{{duration}}</div>
             </div>
             <div class="shadow">
                 <div class="player-line-right"></div>
