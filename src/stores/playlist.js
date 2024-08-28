@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed,nextTick } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 
 export const usePlaylistStore = defineStore('playlist', () => {
   const currentSongIndex = ref(0)
@@ -30,17 +30,28 @@ export const usePlaylistStore = defineStore('playlist', () => {
   })
   
   async function setListSongs() {
-    playlists.value.forEach(async ({playlistId, songs}) => {
+    playlists.value
+    .filter(playlist => playlist.songs.length === 0)
+    .forEach(async ({playlistId, songs}, index) => {
       const url = "https://www.googleapis.com/youtube/v3/playlistItems" +
         "?playlistId=" + playlistId +
         "&key="+import.meta.env.VITE_YOUTUBE_API_KEY +
         "&part=contentDetails" +
         "&q=YouTube+Data+API" +
         "&type=video" +
-        "&maxResults=7" +
+        "&maxResults=50" +
         "&videoCaption=closedCaption";
       
-        const { items } = await fetch(url).then(res => res.json());
+        const { items, error } = await fetch(url).then(res => res.json());
+        if(error){
+          playlists.value.splice(index-1, 1);
+
+          const { errors } = error;
+          const messages = errors.map(({reason, message})=> `${reason}: ${message}`)
+          alert(messages.join('\n'));
+          return;
+        }
+
         items.forEach(async item => {
           songs.push(await getVideoInfo(item.contentDetails.videoId));
         });
@@ -103,6 +114,18 @@ export const usePlaylistStore = defineStore('playlist', () => {
     setListSongs()
   });
 
+  async function addNewPlaylist(playlistId) {
+    const newPlaylist = {
+      name: `新播放列表 ${playlists.value.length + 1}`, 
+      playlistId: playlistId,
+      songs: []
+    };
+
+    playlists.value.push(newPlaylist);
+    
+    await setListSongs();
+  }
+
   return {
     currentSong,
     currentList,
@@ -115,6 +138,7 @@ export const usePlaylistStore = defineStore('playlist', () => {
     setListSongs,
     nextSong,
     lastSong,
-    randomSong
+    randomSong,
+    addNewPlaylist
   }
 })

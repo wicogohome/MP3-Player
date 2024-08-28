@@ -1,10 +1,11 @@
 <script >
-import { defineComponent, nextTick } from 'vue';
+import { defineComponent } from 'vue';
 import { usePlaylistStore } from './stores/playlist'
 import { usePlayer } from './utils/usePlayer';
 import { storeToRefs } from 'pinia';
 import { usePlayerControls } from './utils/usePlayerControls';
 import { useUI } from './utils/useUI';
+import { usePlaylistInput } from './utils/usePlaylistInput';
 
 export default defineComponent({
     setup() {
@@ -14,6 +15,7 @@ export default defineComponent({
         const { play, pause, seek, randomSong, nextSong, lastSong, isRandom, vol } = usePlayerControls(player, currentSong, playerTimer);
 
         const { isListShow } = useUI();
+        const { newPlaylist, addNewPlaylist } = usePlaylistInput();
         
         loadPlayer();
 
@@ -42,6 +44,10 @@ export default defineComponent({
             isRandom,
 
             isListShow,
+
+            // add playlist
+            newPlaylist,
+            addNewPlaylist
         }
     }
 })
@@ -52,7 +58,16 @@ export default defineComponent({
     <div class="row justify-content-center">
         <div class="playlist" :class="{'list-show':isListShow}">
             <div class="playlist-left">
-                <input type="text" name="search" class="input-custom" v-model="newPlaylist">
+                <form @submit.prevent="addNewPlaylist">
+                    <input 
+                        type="text" 
+                        name="search" 
+                        class="input-custom" 
+                        v-model="newPlaylist"
+                        placeholder="Youtube list ID"
+                    >
+                    <button type="submit" class="btn btn-primary">加入</button>
+                </form>
                 <div class="playlist-left-list mt-5">
                     <div class="left-title">播放列表</div>
                     <ul class="list-unstyled ul-left">
