@@ -34,7 +34,8 @@ export function usePlayer(currentSong) {
         videoId: currentSong.value.videoId,
         events: {
           'onReady': ()=> isReady.value = true,
-          'onStateChange': onPlayerStateChange
+          'onStateChange': onPlayerStateChange,
+          'onError': handleError
           }
         });
   }
@@ -50,6 +51,10 @@ export function usePlayer(currentSong) {
         store.nextSong();
       }
     }
+  }
+
+  function handleError(err){
+    alert('player error:'+ err.data)
   }
 
   function startTimer() {

@@ -39,7 +39,7 @@ export const usePlaylistStore = defineStore('playlist', () => {
         "&part=contentDetails" +
         "&q=YouTube+Data+API" +
         "&type=video" +
-        "&maxResults=50" +
+        "&maxResults=10" +
         "&videoCaption=closedCaption";
       
         const { items, error } = await fetch(url).then(res => res.json());
