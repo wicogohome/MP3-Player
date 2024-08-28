@@ -33,7 +33,7 @@ export const usePlaylistStore = defineStore('playlist', () => {
     playlists.value.forEach(async ({playlistId, songs}) => {
       const url = "https://www.googleapis.com/youtube/v3/playlistItems" +
         "?playlistId=" + playlistId +
-        "&key=AIzaSyBcyWVyJ-OsOIJSB6WhVg3N8UQc34kp1aA" +
+        "&key="+import.meta.env.VITE_YOUTUBE_API_KEY +
         "&part=contentDetails" +
         "&q=YouTube+Data+API" +
         "&type=video" +
@@ -51,7 +51,7 @@ export const usePlaylistStore = defineStore('playlist', () => {
   async function getVideoInfo(videoId) {
     const url = "https://www.googleapis.com/youtube/v3/videos" +
       "?id=" + videoId +
-      "&key=AIzaSyBcyWVyJ-OsOIJSB6WhVg3N8UQc34kp1aA" +
+      "&key="+import.meta.env.VITE_YOUTUBE_API_KEY +
       "&part=snippet,contentDetails" +
       "&q=YouTube+Data+API" +
       "&type=video" +
