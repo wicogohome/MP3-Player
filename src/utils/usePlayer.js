@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref, watch  } from 'vue';
 import { usePlaylistStore } from '@/stores/playlist'
 
 export function usePlayer(currentSong) {
@@ -72,6 +72,17 @@ export function usePlayer(currentSong) {
     }
   }
 
+  // load video
+  async function loadVideo(videoId){
+    if(videoId && player.value){
+      await store.updateCurrentSongInfo();
+      player.value.loadVideoById(videoId);
+    }
+  }
+  watch(currentSong,async (newSong) => {
+    await loadVideo(newSong?.videoId);
+  });
+  
 
   return {
     loadPlayer,

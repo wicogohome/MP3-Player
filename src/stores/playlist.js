@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, watch } from 'vue'
 
 export const usePlaylistStore = defineStore('playlist', () => {
   const currentSongIndex = ref(0)
@@ -22,6 +22,9 @@ export const usePlaylistStore = defineStore('playlist', () => {
   const duration = computed(() => currentSong.value?.time ?? 0)
   const now = computed(() =>  currentSong.value?.now ?? 0)
   
+  nextTick(() => {
+    setListSongs()
+  });
   async function setListSongs() {
     playlists.value
     .filter(playlist => playlist.songs.length === 0)
@@ -29,10 +32,10 @@ export const usePlaylistStore = defineStore('playlist', () => {
       const url = "https://www.googleapis.com/youtube/v3/playlistItems" +
         "?playlistId=" + playlistId +
         "&key="+import.meta.env.VITE_YOUTUBE_API_KEY +
-        "&part=contentDetails" +
+        "&part=snippet,contentDetails" +
         "&q=YouTube+Data+API" +
         "&type=video" +
-        "&maxResults=10" +
+        "&maxResults=30" +
         "&videoCaption=closedCaption";
       
         const { items, error } = await fetch(url).then(res => res.json());
@@ -45,12 +48,23 @@ export const usePlaylistStore = defineStore('playlist', () => {
           return;
         }
 
-        items.forEach(async item => {
-          songs.push(await getVideoInfo(item.contentDetails.videoId));
-        });
+        items.forEach(({
+          snippet:{ title, videoOwnerChannelTitle, thumbnails:{ maxres, high }},
+          contentDetails: { videoId }
+        }) => {
+          const imgUrl= maxres?.url ?? high.url;
+          songs.push({
+            videoId,
+            title,
+            channelTitle: videoOwnerChannelTitle,
+            imgUrl,
+            time: null,
+            now: null
+          })
+        }
+        );
     });
   }
-
 
   async function getVideoInfo(videoId) {
     const url = "https://www.googleapis.com/youtube/v3/videos" +
@@ -62,17 +76,37 @@ export const usePlaylistStore = defineStore('playlist', () => {
       "&videoCaption=closedCaption";
 
       const { items } = await fetch(url).then(res => res.json());
-      const { snippet:{ title, thumbnails:{ maxres, high }, channelTitle }, contentDetails:{ duration }} = items[0];
+      const { snippet:{  thumbnails:{ maxres, high } }, contentDetails:{ duration }} = items[0];
       const imgUrl= maxres?.url ?? high.url;
       let time = duration;
       time = time.slice(2, time.length);
       time = Number(time.slice(0, time.indexOf("M"))) * 60 + Number(time.slice(time.indexOf("M") + 1, time.length - 1));
       
       return {
-        videoId: videoId,
-        title: title,
-        channelTitle: channelTitle,
         imgUrl: imgUrl,
+        time: time
+      };
+  }
+
+  async function updateCurrentSongInfo() {
+    if (currentSong.value && currentSong.value.videoId && !currentSong.value.time) {
+      try {
+        const { imgUrl, time } = await getVideoInfo(currentSong.value.videoId);
+        currentSong.value.imgUrl = imgUrl;
+        currentSong.value.time = time;
+        currentSong.value.now = 0;
+      } catch (error) {
+        console.error('Failed to update video info:', error);
+      }
+    }
+  }
+
+  watch(currentSong, () => {
+    updateCurrentSongInfo();
+  });
+
+
+
   const isRandom = ref(false);
   function nextSong(){
     if(isRandom.value){
@@ -104,9 +138,6 @@ export const usePlaylistStore = defineStore('playlist', () => {
   }
 
 
-  nextTick(() => {
-    setListSongs()
-  });
 
   async function addNewPlaylist(playlistId) {
     const newPlaylist = {
@@ -134,6 +165,8 @@ export const usePlaylistStore = defineStore('playlist', () => {
     nextSong,
     lastSong,
     randomSong,
-    addNewPlaylist
+    addNewPlaylist,
+    updateCurrentSongInfo 
   }
 })
+

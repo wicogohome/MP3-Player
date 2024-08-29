@@ -40,17 +40,6 @@ export function usePlayerControls(player, currentSong, playerTimer) {
   }
 
 
-  // load video
-  function loadVideo(videoId){
-    if(videoId && player.value){
-      player.value.loadVideoById(videoId);
-    }
-  }
-  watch(currentSong, () => {
-    loadVideo(currentSong.value?.videoId);
-  });
-
-
   return {
     play,
     pause,
