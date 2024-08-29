@@ -156,7 +156,7 @@ export default defineComponent({
             </div>
             <div class="row  no-gutters justify-content-around ">
                 <div class="col-4 title-col">
-                    <div class="title ellipsis-text active">
+                    <div class="title ellipsis-text" :class="{'active':isPlaying}">
                             <b>{{currentSong.title}}</b>
                         </div>
                     <div class="channel ellipsis-text">{{currentSong.channelTitle}}</div>
