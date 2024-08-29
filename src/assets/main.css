@@ -386,6 +386,9 @@ ul.ul-right {
     overflow: auto;
     height: 80%;
 }
+.song-title {
+    font-size: 1.25rem;
+}
 
 .list-title {
     font-size: 1.88rem;
@@ -426,6 +429,24 @@ ul.ul-right {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+.ellipsis-text:hover> *,.ellipsis-text.active> * {
+    animation: marqee 10s linear infinite;
+    display: block;
+}
+
+
+@keyframes marqee {
+    0% {
+     left: 100%;
+     transform: translateX(0%);
+    }
+   
+    100% {
+     left: 0;
+     transform: translateX(-100%);
+    }
+}
+
 
 .ellipsis-text-container {
     width: 50%;

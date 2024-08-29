@@ -7,12 +7,12 @@ export const usePlaylistStore = defineStore('playlist', () => {
   const playlists = ref([
     {
       name: 'work', 
-      playlistId: 'RDshtmgfivCyo',
+      playlistId: 'PLgS90TC_rSgUkONXGNqIv17f4cncfnpzM',
       songs: []
     },
     {
       name: 'musical', 
-      playlistId: 'RDPUlQNsl4Qvk',
+      playlistId: 'PLK1wqzZ8S6Rxh4Lird7421tcLNvtpD8uQ',
       songs: []
     }
   ])

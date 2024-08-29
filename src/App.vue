@@ -100,8 +100,8 @@ export default defineComponent({
                         <li v-for="(song,index) in currentList.songs" :key="index" class="li-right" @click="currentSongIndex=index">
                             <div class="row no-gutters  justify-content-between">
                                 <div class="ellipsis-text-container">
-                                    <div class="ellipsis-text">
-                                        <h5><b>{{song.title}}</b></h5>
+                                    <div class="ellipsis-text song-title">
+                                        <b>{{song.title}}</b>
                                     </div>
                                 </div>
                                 <div class="ellipsis-text-container-right">
@@ -155,10 +155,12 @@ export default defineComponent({
 
             </div>
             <div class="row  no-gutters justify-content-around ">
-                <div class=" col-4 title-col">
-                    <div class="title ellipsis-text"><b>{{currentSong.title}}</b>
-                        <div class="channel ellipsis-text">{{currentSong.channelTitle}}</div>
-                    </div>
+                <div class="col-4 title-col">
+                    <div class="title ellipsis-text active">
+                            <b>{{currentSong.title}}</b>
+                        </div>
+                    <div class="channel ellipsis-text">{{currentSong.channelTitle}}</div>
+                 
                 </div>
 
                 <div class="btn-set col-4 m-0 d-flex justify-content-center">
