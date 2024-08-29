@@ -10,9 +10,9 @@ import { usePlaylistInput } from './utils/usePlaylistInput';
 export default defineComponent({
     setup() {
         const playlistStore = usePlaylistStore()
-        const { playlists, currentSong, currentSongIndex, currentList ,currentListIndex, duration, now } = storeToRefs(playlistStore)
+        const { playlists, currentSong, currentSongIndex, currentList ,currentListIndex, duration, now, isRandom  } = storeToRefs(playlistStore)
         const { player, isReady, isPlaying ,loadPlayer, playerTimer } = usePlayer(currentSong);
-        const { play, pause, seek, randomSong, nextSong, lastSong, isRandom, vol } = usePlayerControls(player, currentSong, playerTimer);
+        const { play, pause, seek, randomSong, nextSong, lastSong, vol } = usePlayerControls(player, currentSong, playerTimer);
 
         const { isListShow, formatTime } = useUI();
         const { newPlaylist, addNewPlaylist } = usePlaylistInput();
@@ -146,7 +146,7 @@ export default defineComponent({
                   </div>
                   
        
-                    <div class="btn-set btn-random"  @click="isRandom=!isRandom">
+                    <div class="btn-set btn-random"  @click="randomSong()">
                         <div class="btn-shadow" :class="{'click':isRandom}"></div>
                         <div class="player-random-btn player-btn-sm" :class="{'btn-is-random':isRandom}">
                             <img src="/image/Group 20.svg" alt="next" width="30"></div>
@@ -167,10 +167,10 @@ export default defineComponent({
                     <div id="player-hand" class="hand-default" :class="{'hand-active':isPlaying}">
                       <img src="/image/player.svg" alt="player">
                     </div>
-             
-                    <div class="player-start-btn player-btn-lg mx-auto" v-show="!isPlaying && isReady" @click="play">
+
+                    <div class="player-start-btn player-btn-lg mx-auto" v-if="!isPlaying && isReady" @click="play">
                         <img src="/image/play.svg" alt="play" width="30"></div>
-                    <div class="player-puase-btn player-btn-lg mx-auto" v-show="isPlaying || !isReady" @click="pause">
+                    <div class="player-puase-btn player-btn-lg mx-auto" v-else-if="isPlaying || !isReady" @click="pause">
                         <img src="/image/stop.svg" alt="play" width="30"></div>
 
                   </div>

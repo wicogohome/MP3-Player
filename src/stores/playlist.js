@@ -73,28 +73,29 @@ export const usePlaylistStore = defineStore('playlist', () => {
         title: title,
         channelTitle: channelTitle,
         imgUrl: imgUrl,
-        time: time,
-        now: 0
-      };
-
-      
- 
-  }
-
-
+  const isRandom = ref(false);
   function nextSong(){
+    if(isRandom.value){
+      return randomSong();
+    }
     let song = currentSongIndex.value + 1;
     song = song < currentList.value.songs.length ? song : 0;
     currentSongIndex.value = song;
   }
 
   function lastSong(){
+    if(isRandom.value){
+      return randomSong();
+    }
     let song = currentSongIndex.value - 1;
     song = song > -1 ? song : currentList.value.songs.length - 1;
     currentSongIndex.value = song;
   }
 
   function randomSong() {
+    if(!isRandom.value){
+      return;
+    }
       const list = Math.round(Math.random());
       currentListIndex.value = list;
 
@@ -127,6 +128,7 @@ export const usePlaylistStore = defineStore('playlist', () => {
     playlists, 
     duration,
     now,
+    isRandom,
     getVideoInfo,
     setListSongs,
     nextSong,

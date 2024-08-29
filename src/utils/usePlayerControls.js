@@ -34,17 +34,10 @@ export function usePlayerControls(player, currentSong, playerTimer) {
   }
 
   // random 
-  const isRandom = ref(false);
   function randomSong() {
-    if (isRandom.value) {
-      store.randomSong();
-    }
+    store.isRandom = !store.isRandom;
+    store.randomSong();
   }
-  watch(isRandom, () => {
-    if (isRandom.value) {
-      randomSong();
-    }
-  });
 
 
   // load video
@@ -64,7 +57,6 @@ export function usePlayerControls(player, currentSong, playerTimer) {
     seek,
     vol,
 
-    isRandom,
     randomSong,
     nextSong,
     lastSong,
