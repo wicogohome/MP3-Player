@@ -14,7 +14,7 @@ export default defineComponent({
         const { player, isReady, isPlaying ,loadPlayer, playerTimer } = usePlayer(currentSong);
         const { play, pause, seek, randomSong, nextSong, lastSong, isRandom, vol } = usePlayerControls(player, currentSong, playerTimer);
 
-        const { isListShow } = useUI();
+        const { isListShow, formatTime } = useUI();
         const { newPlaylist, addNewPlaylist } = usePlaylistInput();
 
         loadPlayer();
@@ -45,6 +45,7 @@ export default defineComponent({
             isRandom,
 
             isListShow,
+            formatTime,
 
             // add playlist
             newPlaylist,
@@ -110,7 +111,7 @@ export default defineComponent({
                                 <div class="ellipsis-text-container">
                                     <div class="ellipsis-text">{{song.channelTitle}}</div>
                                 </div>
-                                <p class="text-right"> {{Math.floor(song.time/60) +':'+ song.time%60}}</p>
+                                <p class="text-right"> {{formatTime(song?.time ?? 0)}}</p>
                             </div>
 
                         </li>
@@ -185,7 +186,7 @@ export default defineComponent({
 
             </div>
             <div class="row no-gutters px-4">
-                <div id="through_time" class="col-md-1 col-2 text-right pr-3">{{now}}</div>
+                <div id="through_time" class="col-md-1 col-2 text-right pr-3">{{ formatTime(now, "0:00") }}</div>
                 <div class="col-md-10 col-8 ">
                     <div class="slidecontainer">
                         <input type="range" :min=0 :max="currentSong.time"
@@ -194,7 +195,7 @@ export default defineComponent({
                                :style="{background: 'rgba(0, 0, 0, 0) linear-gradient(to right, rgb(197, 197, 197)'+(currentSong.now/currentSong.time)*100+'%,rgb(255, 255, 255)'+(currentSong.now/currentSong.time)*100+'%) repeat scroll 0% 0%'}">
                     </div>
                 </div>
-                <div id="full_time" class="col-md-1 col-2">{{duration}}</div>
+                <div id="full_time" class="col-md-1 col-2">{{ formatTime(duration) }}</div>
             </div>
             <div class="shadow">
                 <div class="player-line-right"></div>

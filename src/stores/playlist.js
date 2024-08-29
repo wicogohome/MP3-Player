@@ -19,15 +19,8 @@ export const usePlaylistStore = defineStore('playlist', () => {
   const currentSong = computed(()=> playlists.value[currentListIndex.value]?.songs[currentSongIndex.value] ?? {})
   const currentList = computed(()=> playlists.value[currentListIndex.value] ?? {})
   
-  const duration = computed(() => {
-    const time = currentSong.value?.time ?? 0
-    return Math.floor(time / 60) + ':' + (time % 60).toString().padStart(2,'0')
-  })
-  
-  const now = computed(() => {
-    const time = currentSong.value?.now ?? 0
-    return Math.floor(time / 60) + ':' + (time % 60).toString().padStart(2,'0')
-  })
+  const duration = computed(() => currentSong.value?.time ?? 0)
+  const now = computed(() =>  currentSong.value?.now ?? 0)
   
   async function setListSongs() {
     playlists.value
